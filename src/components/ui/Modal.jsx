@@ -27,7 +27,7 @@ export function ConfirmModal({ open, onClose, onConfirm, loading }) {
     <Modal open={open} onClose={onClose} maxWidth={320}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: '2rem', marginBottom: 12 }}>🗑️</div>
-        <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1rem', fontWeight: 600, marginBottom: 8 }}>
+        <div style={{ fontFamily: 'DM Sans, serif', fontSize: '1rem', fontWeight: 600, marginBottom: 8 }}>
           Remover registro?
         </div>
         <div style={{ fontSize: '0.88rem', color: 'var(--ink-light)', marginBottom: 20 }}>

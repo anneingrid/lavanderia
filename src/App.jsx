@@ -78,7 +78,7 @@ function Root() {
   if (session === undefined) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-        <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.4rem', color: 'var(--terracotta)' }}>
+        <div style={{ fontFamily: 'DM Sans, serif', fontSize: '1.4rem', color: 'var(--terracotta)' }}>
           lavanda<span style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--ink-light)' }}>ria</span> 🧺
         </div>
       </div>
