@@ -8,7 +8,7 @@ import { FormField } from '../components/ui/FormField'
 import { Empty } from '../components/ui/Empty'
 import { precoTipoParaCliente, fmt, fmtDate, today } from '../lib/precos'
 import { EditarNotaModal } from './EditarNotaModal'
-
+import { corCliente } from '../lib/precos'
 const POR_PAGINA = 8
 
 const styles = `
@@ -226,23 +226,6 @@ export function Pecas() {
     } finally { setDelLoading(false); setDelTarget(null) }
   }
 
-  function corCliente(nome) {
-    const cores = [
-      { bg: '#fce4ec', text: '#c2185b' },
-      { bg: '#ede7f6', text: '#6a1b9a' },
-      { bg: '#e3f2fd', text: '#1565c0' },
-      { bg: '#e8f5e9', text: '#2e7d32' },
-      { bg: '#fff3e0', text: '#e65100' },
-      { bg: '#fce8e8', text: '#b71c1c' },
-      { bg: '#e0f7fa', text: '#00695c' },
-      { bg: '#f3e5f5', text: '#7b1fa2' },
-      { bg: '#e8eaf6', text: '#283593' },
-      { bg: '#f9fbe7', text: '#558b2f' },
-    ]
-    let hash = 0
-    for (let i = 0; i < nome.length; i++) hash = nome.charCodeAt(i) + ((hash << 5) - hash)
-    return cores[Math.abs(hash) % cores.length]
-  }
 
   // Paginação — compartilhada entre desktop e mobile
   const listaFiltrada = [...lancamentos]
@@ -294,7 +277,7 @@ export function Pecas() {
           </FormField>
           <FormField label="Cliente" style={{ margin: 0 }}>
             <input
-              type="text" placeholder="Nome do cliente" value={cliente}
+              type="text" placeholder="Nome do Cliente" value={cliente}
               list="dl-clientes-pecas"
               onChange={(e) => handleClienteChange(e.target.value)}
             />
@@ -307,7 +290,7 @@ export function Pecas() {
         {/* Itens da nota */}
         <div className="nota-itens">
           <div className="nota-header-row">
-            <span>Tipo de peça</span>
+            <span>Peça</span>
             <span style={{ textAlign: 'center' }}>Qtd</span>
             <span style={{ textAlign: 'right' }}>Subtotal</span>
             <span />
@@ -340,7 +323,7 @@ export function Pecas() {
         </FormField>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
-          <Button onClick={handleSalvar} disabled={saving}>
+          <Button onClick={handleSalvar} disabled={saving} variant="success">
             <ClipboardList size={15} strokeWidth={2} style={{ marginRight: 6 }} />
             {saving ? 'Salvando...' : 'Registrar nota'}
           </Button>
@@ -352,13 +335,13 @@ export function Pecas() {
         <div className="card-title flex-between">
           <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <ClipboardList size={16} strokeWidth={2} />
-            Registros recentes
+            Recentes
           </span>
           <select
             value={filtro} onChange={(e) => setFiltro(e.target.value)}
             style={{ width: 'auto', padding: '5px 10px', fontSize: '0.8rem' }}
           >
-            <option value="">Todos os clientes</option>
+            <option value="">Todos</option>
             {todosNomes.map((n) => <option key={n} value={n}>{n}</option>)}
           </select>
         </div>

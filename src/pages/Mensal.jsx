@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import { useData } from '../context/DataContext'
 import { StatBox, StatsGrid } from '../components/ui/StatBox'
-import { calcLancValor, saldoCliente, fmt, fmtDate, MESES } from '../lib/precos'
+import { calcLancValor, saldoCliente, fmt, fmtDate, MESES, fmtDateSemAno } from '../lib/precos'
+import { gerarRelatorioMensalPDF } from '../lib/relatorioPdf'
+import { Button } from '../components/ui/Button'
+import { FileDown, UserRound, LoaderCircle, X, Save } from 'lucide-react'
+import { useToast } from '../context/ToastContext'
 
 function getSemanas(y, m) {
   const r = []; const ld = new Date(y, m + 1, 0).getDate(); let d = 1
@@ -17,26 +21,41 @@ function SemanaBlock({ sem, idx, ls, ps }) {
   const vl = ls.reduce((s, l) => s + calcLancValor(l), 0)
   const vp = ps.reduce((s, p) => s + (p.valor || 0), 0)
   const pc = ls.filter((l) => l.tipo === 'lencol').reduce((s, l) => s + (l.qtd || 0), 0)
-
+  const { toast } = useToast()
   const all = [
     ...ls.map((l) => ({ ...l, _t: 'l' })),
     ...ps.map((p) => ({ ...p, _t: 'p' })),
   ].sort((a, b) => (a.data > b.data ? 1 : -1))
 
+  async function handleExportarPDF() {
+    try {
+      await gerarRelatorioMensalPDF({
+        lancamentos: lM,
+        pagamentos: pM,
+        cliente: filtro,
+        ano,
+        mes,
+        dataFim: dataFimRelatorio,
+      })
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error)
+      alert('Não foi possível gerar o PDF. Verifique o console.')
+    }
+  }
   return (
     <div className="week-block">
       <div className="week-header" onClick={() => setOpen(!open)}>
         <span>
           Sem. {idx + 1}{' '}
-          <span style={{ fontWeight: 300, color: 'var(--ink-light)' }}>
-            {fmtDate(sem.s)} – {fmtDate(sem.e)}
+          <br></br>
+          <span style={{ fontWeight: 300, color: 'var(--ink-light)', fontSize: 12 }}>
+            {fmtDateSemAno(sem.s)} – {fmtDateSemAno(sem.e)}
           </span>
         </span>
         <div className="wh-right">
-          <span>{pc} peças</span>
           <span className="green">{fmt(vp)} rec.</span>
           <span style={{ color: 'var(--terracotta)' }}>{fmt(vl)} lanç.</span>
-          <span>{open ? '▴' : '▾'}</span>
+          <span style={{ fontSize: 20 }}>{open ? '▴' : '▾'}</span>
         </div>
       </div>
       {open && (
@@ -46,12 +65,12 @@ function SemanaBlock({ sem, idx, ls, ps }) {
           ) : (
             <table className="tbl" style={{ margin: 0 }}>
               <thead>
-                <tr><th>Data</th><th>Cliente</th><th>Descrição</th><th className="text-right">Valor</th></tr>
+                <tr><th>Data</th><th>Cliente</th><th>Desc.</th><th className="text-right">Valor</th></tr>
               </thead>
               <tbody>
                 {all.map((r, i) => r._t === 'l' ? (
                   <tr key={r.id || i}>
-                    <td>{fmtDate(r.data)}</td>
+                    <td>{fmtDateSemAno(r.data)}</td>
                     <td>{r.cliente}</td>
                     <td>
                       <span className="badge badge-blue">🛏</span>{' '}
@@ -61,7 +80,7 @@ function SemanaBlock({ sem, idx, ls, ps }) {
                   </tr>
                 ) : (
                   <tr key={r.id || i}>
-                    <td>{fmtDate(r.data)}</td>
+                    <td>{fmtDateSemAno(r.data)}</td>
                     <td>{r.cliente}</td>
                     <td><span className="badge badge-green">💰</span> {r.obs || ''}</td>
                     <td className="text-right green">{fmt(r.valor || 0)}</td>
@@ -79,20 +98,26 @@ function SemanaBlock({ sem, idx, ls, ps }) {
 export function Mensal() {
   const { lancamentos, pagamentos, todosNomes } = useData()
   const now = new Date()
-  const [ano,    setAno]    = useState(now.getFullYear())
-  const [mes,    setMes]    = useState(now.getMonth())
+  const [ano, setAno] = useState(now.getFullYear())
+  const [mes, setMes] = useState(now.getMonth())
   const [filtro, setFiltro] = useState('')
-
+const { toast } = useToast()
   function mudar(d) {
     let m = mes + d, y = ano
     if (m > 11) { m = 0; y++ }
-    if (m < 0)  { m = 11; y-- }
+    if (m < 0) { m = 11; y-- }
     setMes(m); setAno(y)
   }
 
   const start = `${ano}-${String(mes + 1).padStart(2, '0')}-01`
   const lastDay = new Date(ano, mes + 1, 0).getDate()
   const end = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
+  const hoje = new Date()
+
+  const dataFimRelatorio =
+    ano === hoje.getFullYear() && mes === hoje.getMonth()
+      ? hoje.toISOString().slice(0, 10)
+      : end
 
   let lM = lancamentos.filter((l) => l.data >= start && l.data <= end)
   let pM = pagamentos.filter((p) => p.data >= start && p.data <= end)
@@ -105,27 +130,62 @@ export function Mensal() {
 
   const semanas = getSemanas(ano, mes)
 
+  async function handleExportarPDF() {
+    await gerarRelatorioMensalPDF({
+      lancamentos: lM,
+      pagamentos: pM,
+      cliente: filtro,
+      ano,
+      mes,
+      dataFim: dataFimRelatorio,
+    })
+    toast('PDF salvo com sucesso! 📄')
+  }
+
   return (
     <>
       {/* Navegação mês */}
       <div className="month-nav">
         <button onClick={() => mudar(-1)}>‹</button>
+
         <div className="month-label">
           {MESES[mes]} {ano}{filtro ? ` · ${filtro}` : ''}
         </div>
+
         <button onClick={() => mudar(1)}>›</button>
+
         <select
-          value={filtro} onChange={(e) => setFiltro(e.target.value)}
-          style={{ marginLeft: 'auto', width: 'auto', padding: '6px 12px', fontSize: '0.84rem' }}
+          value={filtro}
+          onChange={(e) => setFiltro(e.target.value)}
+          style={{
+            marginLeft: 'auto',
+            width: 'auto',
+            padding: '6px 12px',
+            fontSize: '0.84rem'
+          }}
         >
           <option value="">Todos os clientes</option>
-          {todosNomes.map((n) => <option key={n} value={n}>{n}</option>)}
+          {todosNomes.map((n) => (
+            <option key={n} value={n}>
+              {n}
+            </option>
+          ))}
         </select>
+{filtro && (
+      <button
+        className="modal-close-btn"
+        onClick={handleExportarPDF}
+        title="Exportar PDF"
+      >
+        <FileDown size={20} />
+      </button>
+    )}
+        
       </div>
 
       {/* Stats */}
       <StatsGrid>
-        <StatBox label="Total lançado" value={fmt(tl)} sub={`${tc} lençóis + outros`} />
+        <StatBox label="Total lançado" value={fmt(tl)} />
         <StatBox label="Total recebido" value={fmt(tp)} color="var(--sage-dark)" />
         {filtro ? (
           <StatBox

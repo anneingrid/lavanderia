@@ -128,7 +128,7 @@ export function Pagamentos() {
             onClick={() => setTipo('pecas')}
           >
             <WashingMachine size={15} strokeWidth={2} />
-            Qtd de peças
+            Qtd
           </button>
         </div>
 

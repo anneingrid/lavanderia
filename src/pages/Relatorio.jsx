@@ -18,7 +18,7 @@ export function Relatorio({ onIrParaMes }) {
   const [ano, setAno] = useState(anos[0] || String(new Date().getFullYear()))
 
   const lA = lancamentos.filter((l) => l.data?.startsWith(ano))
-  const pA = pagamentos.filter((p)  => p.data?.startsWith(ano))
+  const pA = pagamentos.filter((p) => p.data?.startsWith(ano))
   const tl = lA.reduce((s, l) => s + calcLancValor(l), 0)
   const tp = pA.reduce((s, p) => s + (p.valor || 0), 0)
   const tc = lA.filter((l) => l.tipo === 'lencol').reduce((s, l) => s + (l.qtd || 0), 0)
@@ -26,7 +26,7 @@ export function Relatorio({ onIrParaMes }) {
   return (
     <>
       <div className="flex-between" style={{ marginBottom: 18 }}>
-        <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.3rem', fontWeight: 600 }}>Relatório anual</div>
+        <div style={{ fontFamily: 'Archivo Black', fontSize: '1.3rem', fontWeight: 600, color:"#0e2e33" }}>Relatório anual</div>
         <select
           value={ano} onChange={(e) => setAno(e.target.value)}
           style={{ width: 'auto', padding: '7px 12px' }}
@@ -36,15 +36,22 @@ export function Relatorio({ onIrParaMes }) {
       </div>
 
       <StatsGrid>
-        <StatBox label="Total lançado"  value={fmt(tl)} sub={`${tc} lençóis`} />
+        <StatBox label="Total lançado" value={fmt(tl)} sub={`${tc} lençóis`} />
         <StatBox label="Total recebido" value={fmt(tp)} color="var(--sage-dark)" />
-        <StatBox label="A receber"      value={fmt(Math.max(0, tl - tp))} color="var(--terracotta)" />
+        <StatBox label="A receber" value={fmt(Math.max(0, tl - tp))} color="var(--terracotta)" />
       </StatsGrid>
 
       {/* Grade mensal */}
       <div className="card">
         <div className="card-title">Por mês</div>
+
         <div className="year-grid">
+          <div className="year-table-header">
+            <span>Mês</span>
+            <span>Lançado</span>
+            <span>Recebido</span>
+          </div>
+
           {MESES.map((nome, mi) => {
             const ms = `${ano}-${String(mi + 1).padStart(2, '0')}`
             const lm = lA.filter((l) => l.data?.startsWith(ms))
@@ -52,14 +59,16 @@ export function Relatorio({ onIrParaMes }) {
             const vl = lm.reduce((s, l) => s + calcLancValor(l), 0)
             const vp = pm.reduce((s, p) => s + (p.valor || 0), 0)
             const pct = tl > 0 ? Math.round((vl / tl) * 100) : 0
+
             return (
-              <div className="year-cell" key={mi} onClick={() => onIrParaMes(parseInt(ano), mi)}>
-                <div className="ym">{nome.slice(0, 3)}</div>
+              <div
+                className="year-cell"
+                key={mi}
+                onClick={() => onIrParaMes(parseInt(ano), mi)}
+              >
+                <div className="ym">{nome}</div>
                 <div className="yv">{fmt(vl)}</div>
-                <div className="yp">{fmt(vp)} rec.</div>
-                <div className="prog-bar">
-                  <div className="prog-fill" style={{ width: `${pct}%` }} />
-                </div>
+                <div className="yp">{fmt(vp)}</div>
               </div>
             )
           })}
@@ -76,21 +85,21 @@ export function Relatorio({ onIrParaMes }) {
             <thead>
               <tr>
                 <th>Cliente</th>
-                <th className="text-right">Lançado</th>
-                <th className="text-right">Recebido</th>
-                <th className="text-right">Saldo devedor</th>
+                <th className="text-right" style={{ color: 'var(--terracotta)' }}>Lançado</th>
+                <th className="text-right green" style={{ color: 'green' }}>Recebido</th>
+                <th className="text-right red">Saldo devedor</th>
               </tr>
             </thead>
             <tbody>
               {todosNomes.map((c) => {
-                const lc    = lA.filter((l) => l.cliente === c).reduce((s, l) => s + calcLancValor(l), 0)
-                const pc    = pA.filter((p) => p.cliente === c).reduce((s, p) => s + (p.valor || 0), 0)
+                const lc = lA.filter((l) => l.cliente === c).reduce((s, l) => s + calcLancValor(l), 0)
+                const pc = pA.filter((p) => p.cliente === c).reduce((s, p) => s + (p.valor || 0), 0)
                 const saldo = saldoCliente(lancamentos, pagamentos, c, `${ano}-12-31`)
                 return (
                   <tr key={c}>
                     <td><strong>{c}</strong></td>
-                    <td className="text-right">{fmt(lc)}</td>
-                    <td className="text-right green">{fmt(pc)}</td>
+                    <td className="text-right" style={{ color: 'var(--terracotta)' }}>{fmt(lc)}</td>
+                    <td className="green" style={{ color: 'green' }}>{fmt(pc)}</td>
                     <td className={`text-right ${saldo > 0.01 ? 'red' : 'green'}`}>{fmt(saldo)}</td>
                   </tr>
                 )

@@ -247,7 +247,7 @@ export function Tipos() {
       <style>{toggleStyles}</style>
 
       <div className="flex-between" style={{ marginBottom: 20 }}>
-        <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.3rem', fontWeight: 600 }}>
+        <div style={{ fontFamily: 'Archivo Black, serif', fontSize: '1.3rem', fontWeight: 600, color:"#0e2e33" }}>
           Tipos de peça
         </div>
         <Button size="sm" onClick={abrirNovo}>+ Nova peça</Button>

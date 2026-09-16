@@ -21,7 +21,7 @@ export function Login() {
   return (
     <div id="login-screen" style={{ display: 'flex' }}>
       <div className="login-box">
-        <div className="login-logo">lavanda<span>ria</span> 🧺</div>
+        <div className="login-logo">Lavanderia<span> 9 </span> Pérolas 🧺</div>
         <div className="login-sub">Entre para acessar o sistema</div>
         <form onSubmit={handleLogin}>
           <div className="form-group">

@@ -5,43 +5,100 @@ import {
 import { useAuth } from '../context/AuthContext'
 
 const TABS = [
-  { id: 'lancamento', label: 'Peças',      icon: ClipboardList },
-  { id: 'pagamento',  label: 'Pagamentos', icon: Banknote      },
-  { id: 'mensal',     label: 'Mensal',     icon: CalendarDays  },
-  { id: 'relatorio',  label: 'Relatório',  icon: BarChart2     },
-  { id: 'clientes',   label: 'Clientes',   icon: Users         },
-  { id: 'tipos',      label: 'Tipos',      icon: Tag           },
+  { id: 'lancamento', label: 'Peças', icon: ClipboardList },
+  { id: 'pagamento', label: 'Pagamentos', icon: Banknote },
+  { id: 'mensal', label: 'Mensal', icon: CalendarDays },
+  { id: 'relatorio', label: 'Relatório', icon: BarChart2 },
+  { id: 'clientes', label: 'Clientes', icon: Users },
+  { id: 'tipos', label: 'Tipos', icon: Tag },
 ]
 
 const styles = `
+nav .tab {
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  box-shadow: none;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+
+  background: transparent;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: var(--ink-light);
+
+  cursor: pointer;
+  padding: 8px 6px 6px;
+  line-height: 1;
+  white-space: nowrap;
+
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+nav .tab:hover {
+  color: var(--terracotta);
+  background: transparent;
+}
+
+nav .tab:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+nav .tab:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+nav .tab.active {
+  color: var(--terracotta);
+  border-bottom-color: var(--terracotta);
+  font-weight: 500;
+}
+
+nav .tab span {
+  display: block;
+}
+
+@media (max-width: 600px) {
+  nav {
+    padding: 0 12px;
+    gap: 2px;
+  }
+
   nav .tab {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    font-size: 0.68rem;
-    padding: 8px 6px 6px;
-    line-height: 1;
+    padding: 9px 10px 7px;
+    font-size: 0.65rem;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 430px) {
+  nav {
+    padding: 0 8px;
   }
 
-  nav .tab span {
-    display: block;
+  nav .tab {
+    padding-left: 8px;
+    padding-right: 8px;
   }
+}
 
-  .btn-config {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+@media (max-width: 360px) {
+  nav .tab {
+    padding-left: 7px;
+    padding-right: 7px;
+    font-size: 0.62rem;
   }
-
-  .btn-config-logout:hover {
-    color: var(--red, #dc3545);
-    background: rgba(220, 53, 69, 0.07);
-  }
-
-  @media (max-width: 360px) {
-    .btn-config span { display: none; }
-  }
+}
 `
 
 export function Layout({ activeTab, onTabChange, onOpenPrecoGlobal, children }) {
@@ -53,12 +110,12 @@ export function Layout({ activeTab, onTabChange, onOpenPrecoGlobal, children }) 
 
       <div className="app">
         <header>
-          <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <WashingMachine size={22} strokeWidth={1.8} style={{ color: 'var(--sage, #6b9e7a)' }} />
-            lavande<span>ria</span>
+          <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <WashingMachine size={22} strokeWidth={1.8} style={{ color: 'var(--sage, #0e2e33)' }} />
+            <span>9</span> Pérolas
           </div>
 
-          <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 3 }}>
             <button
               className="btn-config"
               onClick={onOpenPrecoGlobal}

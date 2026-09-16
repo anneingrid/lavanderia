@@ -12,6 +12,7 @@ import { FormField } from '../components/ui/FormField'
 import { Empty } from '../components/ui/Empty'
 import { StatBox, StatsGrid } from '../components/ui/StatBox'
 import { saldoCliente, precoDoCliente, calcLancValor, fmt, fmtDate, today } from '../lib/precos'
+import { corCliente } from '../lib/precos'
 
 // ---------------------------------------------------------------------------
 // Modal de cadastro / edição
@@ -221,27 +222,6 @@ function DetalheModal({ open, onClose, cliente, lancamentos, pagamentos, onEdit 
 }
 
 // ---------------------------------------------------------------------------
-// Cor consistente por nome de cliente
-// ---------------------------------------------------------------------------
-function corCliente(nome) {
-  const cores = [
-    { bg: '#fce4ec', text: '#c2185b' },
-    { bg: '#ede7f6', text: '#6a1b9a' },
-    { bg: '#e3f2fd', text: '#1565c0' },
-    { bg: '#e8f5e9', text: '#2e7d32' },
-    { bg: '#fff3e0', text: '#e65100' },
-    { bg: '#fce8e8', text: '#b71c1c' },
-    { bg: '#e0f7fa', text: '#00695c' },
-    { bg: '#f3e5f5', text: '#7b1fa2' },
-    { bg: '#e8eaf6', text: '#283593' },
-    { bg: '#f9fbe7', text: '#558b2f' },
-  ]
-  let hash = 0
-  for (let i = 0; i < nome.length; i++) hash = nome.charCodeAt(i) + ((hash << 5) - hash)
-  return cores[Math.abs(hash) % cores.length]
-}
-
-// ---------------------------------------------------------------------------
 // Página
 // ---------------------------------------------------------------------------
 export function Clientes() {
@@ -268,7 +248,7 @@ export function Clientes() {
     <>
       {/* Header */}
       <div className="flex-between" style={{ marginBottom: 20 }}>
-        <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.3rem', fontWeight: 600 }}>
+        <div style={{ fontFamily: 'Archivo Black, serif', fontSize: '1.3rem', fontWeight: 600, color:"#0e2e33" }}>
           Meus clientes
         </div>
         <Button size="sm" onClick={abrirNovo}>
