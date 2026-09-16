@@ -32,6 +32,8 @@ function SemanaBlock({ sem, idx, ls, ps }) {
       await gerarRelatorioMensalPDF({
         lancamentos: lM,
         pagamentos: pM,
+        lancamentosTodos: lancamentos,
+        pagamentosTodos: pagamentos,
         cliente: filtro,
         ano,
         mes,
@@ -101,7 +103,7 @@ export function Mensal() {
   const [ano, setAno] = useState(now.getFullYear())
   const [mes, setMes] = useState(now.getMonth())
   const [filtro, setFiltro] = useState('')
-const { toast } = useToast()
+  const { toast } = useToast()
   function mudar(d) {
     let m = mes + d, y = ano
     if (m > 11) { m = 0; y++ }
@@ -134,6 +136,8 @@ const { toast } = useToast()
     await gerarRelatorioMensalPDF({
       lancamentos: lM,
       pagamentos: pM,
+      lancamentosTodos: lancamentos,
+      pagamentosTodos: pagamentos,
       cliente: filtro,
       ano,
       mes,
@@ -171,16 +175,16 @@ const { toast } = useToast()
             </option>
           ))}
         </select>
-{filtro && (
-      <button
-        className="modal-close-btn"
-        onClick={handleExportarPDF}
-        title="Exportar PDF"
-      >
-        <FileDown size={20} />
-      </button>
-    )}
-        
+        {filtro && (
+          <button
+            className="modal-close-btn"
+            onClick={handleExportarPDF}
+            title="Exportar PDF"
+          >
+            <FileDown size={20} />
+          </button>
+        )}
+
       </div>
 
       {/* Stats */}

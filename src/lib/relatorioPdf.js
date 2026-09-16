@@ -446,6 +446,8 @@ function desenharResumoFinal(doc, totalLancado, totalRecebido, saldo) {
 export async function gerarRelatorioMensalPDF({
     lancamentos,
     pagamentos,
+    lancamentosTodos,
+    pagamentosTodos,
     cliente = '',
     ano,
     mes,
@@ -477,8 +479,8 @@ export async function gerarRelatorioMensalPDF({
 
     const saldo = cliente
         ? saldoCliente(
-            lancamentos,
-            pagamentos,
+            lancamentosTodos,
+            pagamentosTodos,
             cliente,
             fim
         )
@@ -553,7 +555,7 @@ export async function gerarRelatorioMensalPDF({
 
     doc.save(
         `relatorio-${nomeCliente}-${nomeMes}-${ano}.pdf`
-    ) 
+    )
 }
 
 
